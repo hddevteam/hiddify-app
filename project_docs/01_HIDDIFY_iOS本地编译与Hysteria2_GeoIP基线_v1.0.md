@@ -2,7 +2,7 @@
 
 **目标：** 在个人公开 fork 中完成 Hiddify iOS 模拟器构建基线，并验证 Hysteria2、GeoIP/GeoSite 配置入口和 iOS Packet Tunnel 工程结构。
 
-**当前结论：** Hiddify 工程包含 `HiddifyPacketTunnel`、`HiddifyCore.xcframework` 引用和 sing-box GeoIP/GeoSite 路由配置；当前尚未编译，因为 Flutter 公共依赖无法解析。
+**当前结论：** Hiddify 工程包含 `HiddifyPacketTunnel`、`HiddifyCore.xcframework` 引用和 sing-box GeoIP/GeoSite 路由配置；Flutter 依赖和核心框架已恢复，当前阻塞在 CocoaPods 下载 SQLite 源码包。
 
 ## 范围
 
@@ -48,7 +48,28 @@ Because hiddify depends on dart_mappable_builder any which doesn't exist
 (could not find package dart_mappable_builder in cache), version solving failed.
 ```
 
-因此当前还没有生成 `.dart_tool/package_config.json`，也没有执行 Pods 或 iOS 构建。下一步是恢复 pub.dev 访问或补齐完整、可信的 Pub 缓存，然后重新执行 `flutter pub get`。
+## 已通过阶段
+
+- `flutter pub get`：通过。使用临时环境变量 `PUB_HOSTED_URL=https://pub.flutter-io.cn`，未修改仓库配置。
+- `flutter precache --ios`：通过。
+- `make ios-libs`：通过，从 Hiddify Core draft release 下载并解压 `HiddifyCore.xcframework`；包含 iOS arm64 和 iOS Simulator arm64/x86_64 slice，版本 4.1.0，最低 iOS 15.0。
+- 首次模拟器构建已确认原始核心问题：仓库中的 `ios/Frameworks/HiddifyCore.xcframework` 只有 `.gitkeep` 和旧的 `Libcore.xcframework.zip`，不含可识别的二进制 artifact；运行 `make ios-libs` 后已解决。
+
+## 当前阻塞：CocoaPods SQLite 下载
+
+`pod install --no-repo-update` 已开始安装依赖，但在下载 `sqlite3` 的源码包时长时间停滞：
+
+```text
+https://www.sqlite.org/2026/sqlite-src-3520000.zip
+```
+
+当前没有把未完成的下载包加入仓库，也没有修改 Podfile 来绕过该依赖。需要网络下载完成或准备可信的 CocoaPods 缓存后，继续执行 `pod install --no-repo-update`。
+
+## 下一步
+
+1. 完成 SQLite CocoaPods 依赖下载并让 `pod install` 退出码为 0。
+2. 在 `flutter config --no-enable-swift-package-manager` 下重试构建；Xcode 26.6 曾在 Flutter 自动添加 SPM 集成时触发内部异常，已记录为工具链兼容性风险。
+3. 运行 `flutter build ios --simulator --debug`，再安装和启动固定的 iPhone 17 Pro Max 模拟器。
 
 ## 执行顺序
 
@@ -58,4 +79,3 @@ Because hiddify depends on dart_mappable_builder any which doesn't exist
 4. 在固定 iOS 模拟器上构建、安装、启动 Runner。
 5. 检查 Packet Tunnel target、entitlements、bundle identifier 和 HiddifyCore framework。
 6. 使用脱敏 Hysteria2/GeoIP 配置执行解析和真机验证。
-

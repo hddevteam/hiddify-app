@@ -45,8 +45,12 @@ public class ExtensionPlatformInterface: NSObject, LibboxPlatformInterfaceProtoc
         if options.getAutoRoute() {
             settings.mtu = NSNumber(value: options.getMTU())
 
-           let dnsServer = try options.getDNSServerAddress()
-            let dnsSettings = NEDNSSettings(servers: [dnsServer.value,"fdfe:dcba:9876::1"])
+            let dnsServerIterator = try options.getDNSServerAddress()
+            var dnsServers = ["fdfe:dcba:9876::1"]
+            if dnsServerIterator.hasNext() {
+                dnsServers.insert(dnsServerIterator.next(), at: 0)
+            }
+            let dnsSettings = NEDNSSettings(servers: dnsServers)
             dnsSettings.matchDomains = [""]
             dnsSettings.matchDomainsNoSearch = true
             settings.dnsSettings = dnsSettings
@@ -499,6 +503,14 @@ public class ExtensionPlatformInterface: NSObject, LibboxPlatformInterfaceProtoc
         #endif
     }
 
+    public func autoDetectControl(_: Int32) throws {}
+
+    public func closeNeighborMonitor(_: LibboxNeighborUpdateListenerProtocol?) throws {}
+
+    public func registerMyInterface(_: String?) {}
+
+    public func startNeighborMonitor(_: LibboxNeighborUpdateListenerProtocol?) throws {}
+
     public func localDNSTransport() -> (any LibboxLocalDNSTransportProtocol)? {
         nil
     }
@@ -506,6 +518,4 @@ public class ExtensionPlatformInterface: NSObject, LibboxPlatformInterfaceProtoc
     public func systemCertificates() -> (any LibboxStringIteratorProtocol)? {
         nil
     }
-    public func autoDetectControl(_: Int32) throws {}
-
 }

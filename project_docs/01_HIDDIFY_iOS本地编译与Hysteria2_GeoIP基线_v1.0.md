@@ -2,7 +2,7 @@
 
 **目标：** 在个人公开 fork 中完成 Hiddify iOS 模拟器构建基线，并验证 Hysteria2、GeoIP/GeoSite 配置入口和 iOS Packet Tunnel 工程结构。
 
-**当前结论：** Hiddify 工程包含 `HiddifyPacketTunnel`、`HiddifyCore.xcframework` 引用和 sing-box GeoIP/GeoSite 路由配置；Flutter 依赖和核心框架已恢复，当前阻塞在 CocoaPods 下载 SQLite 源码包。
+**当前结论：** 已使用项目要求的 Flutter 3.38.5 完成 iOS Simulator Debug 构建，并将 `apple.hiddify.com` 安装、启动到 iPhone 17 Pro Max 模拟器。Hysteria2/GeoIP/GeoSite 的实际配置验证仍待后续阶段。
 
 ## 范围
 
@@ -23,10 +23,10 @@
 
 ## 验收标准
 
-- [ ] `flutter pub get` 成功并生成 `.dart_tool/package_config.json`。
-- [ ] `pod install` 成功，`Runner.xcworkspace` 可用于构建。
-- [ ] iOS Runner 和 `HiddifyPacketTunnel` 模拟器构建成功。
-- [ ] App 可安装、启动并完成首页人工观察。
+- [x] `flutter pub get` 成功并生成 `.dart_tool/package_config.json`。
+- [x] `pod install` 成功，`Runner.xcworkspace` 可用于构建。
+- [x] iOS Runner 和 `HiddifyPacketTunnel` 模拟器构建成功。
+- [x] App 已安装并启动到固定 iPhone 17 Pro Max 模拟器。
 - [ ] 使用脱敏配置确认 Hysteria2 节点字段可导入或转换。
 - [ ] 确认 GeoIP/GeoSite 数据库或 sing-box rule-set 的来源、下载和更新路径。
 - [ ] 不提交证书、私钥、profile、节点密码或订阅 URL。
@@ -54,22 +54,16 @@ Because hiddify depends on dart_mappable_builder any which doesn't exist
 - `flutter precache --ios`：通过。
 - `make ios-libs`：通过，从 Hiddify Core draft release 下载并解压 `HiddifyCore.xcframework`；包含 iOS arm64 和 iOS Simulator arm64/x86_64 slice，版本 4.1.0，最低 iOS 15.0。
 - 首次模拟器构建已确认原始核心问题：仓库中的 `ios/Frameworks/HiddifyCore.xcframework` 只有 `.gitkeep` 和旧的 `Libcore.xcframework.zip`，不含可识别的二进制 artifact；运行 `make ios-libs` 后已解决。
-
-## 当前阻塞：CocoaPods SQLite 下载
-
-`pod install --no-repo-update` 已开始安装依赖，但在下载 `sqlite3` 的源码包时长时间停滞：
-
-```text
-https://www.sqlite.org/2026/sqlite-src-3520000.zip
-```
-
-当前没有把未完成的下载包加入仓库，也没有修改 Podfile 来绕过该依赖。需要网络下载完成或准备可信的 CocoaPods 缓存后，继续执行 `pod install --no-repo-update`。
+- CocoaPods SQLite 官方源下载速度过低；本次构建使用本地临时 SQLite 3.52.0 源码副本完成依赖安装，未将临时路径提交到仓库。
+- HiddifyCore 4.1.0 的 Libbox Swift 协议比仓库旧接口多出方法，并将 DNS 地址改为迭代器；已在 `ExtensionPlatformInterface.swift` 做最小兼容调整。
+- 项目锁定的依赖需要 Flutter 3.38.5；Flutter 3.44.9 会因 `IconData` final 导致图标包编译失败。
 
 ## 下一步
 
-1. 完成 SQLite CocoaPods 依赖下载并让 `pod install` 退出码为 0。
-2. 在 `flutter config --no-enable-swift-package-manager` 下重试构建；Xcode 26.6 曾在 Flutter 自动添加 SPM 集成时触发内部异常，已记录为工具链兼容性风险。
-3. 运行 `flutter build ios --simulator --debug`，再安装和启动固定的 iPhone 17 Pro Max 模拟器。
+1. 人工观察模拟器首页和配置导入流程。
+2. 使用脱敏 Hysteria2 配置确认导入、解析和启动路径。
+3. 确认 GeoIP/GeoSite 数据库或 sing-box rule-set 的来源、下载和更新路径。
+4. 再评估是否将 SQLite 下载缓存和 Flutter 3.38.5 工具链写入可复现脚本。
 
 ## 执行顺序
 

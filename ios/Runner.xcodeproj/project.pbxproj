@@ -32,6 +32,7 @@
 		075637BA2B01583F005AFB8E /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60F1D4AAC33ACF5C8307310D /* Pods_Runner.framework */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
+		A1B2C3D42ADDF1BD000ADF15 /* FilePath.swift in RunnerTests */ = {isa = PBXBuildFile; fileRef = 03E392CE2ADDEFC8000ADF15 /* FilePath.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		41E9FF922D1C0CC3003780C1 /* HiddifyPacketTunnel.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 03E392B62ADDA00E000ADF15 /* HiddifyPacketTunnel.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		41E9FF962D1C82BA003780C1 /* HiddifyCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 413270682C8A9BA2003A1E9B /* HiddifyCore.xcframework */; };
@@ -660,6 +661,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */,
+				A1B2C3D42ADDF1BD000ADF15 /* FilePath.swift in RunnerTests */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

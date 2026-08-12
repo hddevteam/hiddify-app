@@ -2,7 +2,7 @@
 
 **目标：** 在个人公开 fork 中完成 Hiddify iOS 模拟器构建基线，并验证 Hysteria2、GeoIP/GeoSite 配置入口和 iOS Packet Tunnel 工程结构。
 
-**当前结论：** 已使用项目要求的 Flutter 3.38.5 完成 iOS Simulator Debug 构建，并将 `apple.hiddify.com` 安装、启动到 iPhone 17 Pro Max 模拟器。Hysteria2/GeoIP/GeoSite 的实际配置验证仍待后续阶段。
+**当前结论：** 已修复 App Group 容器不可用导致的启动崩溃，并重新完成模拟器安装启动。连接的实体 iPhone 已识别，但真机安装暂时受签名团队缺少 App Group、Network Extension 和 Personal VPN Profile 阻塞。
 
 ## 范围
 
@@ -57,6 +57,8 @@ Because hiddify depends on dart_mappable_builder any which doesn't exist
 - CocoaPods SQLite 官方源下载速度过低；本次构建使用本地临时 SQLite 3.52.0 源码副本完成依赖安装，未将临时路径提交到仓库。
 - HiddifyCore 4.1.0 的 Libbox Swift 协议比仓库旧接口多出方法，并将 DNS 地址改为迭代器；已在 `ExtensionPlatformInterface.swift` 做最小兼容调整。
 - 项目锁定的依赖需要 Flutter 3.38.5；Flutter 3.44.9 会因 `IconData` final 导致图标包编译失败。
+- `FilePath` 现在优先使用 App Group，无法取得容器时回退到 Application Support；回退和 App Group 两条路径均通过 XCTest。
+- 真机构建已通过源码编译阶段，但签名失败：现有配置团队 `M7Q8ASP66Z` 无 Xcode 账号/Profile；本机可见证书团队 `34D596WSR8` 也没有 Hiddify Bundle ID 对应的 App Group/Network Extension/Personal VPN Profile。
 
 ## 下一步
 

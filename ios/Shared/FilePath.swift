@@ -16,9 +16,19 @@ public enum FilePath {
 public extension FilePath {
     static let groupName = "group.\(packageName)"
 
-    private static let defaultSharedDirectory: URL! = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: FilePath.groupName)
+    static func resolvedSharedDirectory(
+        appGroupDirectory: URL?,
+        applicationSupportDirectory: URL,
+        packageName: String
+    ) -> URL {
+        appGroupDirectory ?? applicationSupportDirectory.appendingPathComponent(packageName, isDirectory: true)
+    }
 
-    static let sharedDirectory = defaultSharedDirectory!
+    static let sharedDirectory = resolvedSharedDirectory(
+        appGroupDirectory: FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: FilePath.groupName),
+        applicationSupportDirectory: FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0],
+        packageName: packageName
+    )
 
     static let cacheDirectory = sharedDirectory
         .appendingPathComponent("Library", isDirectory: true)

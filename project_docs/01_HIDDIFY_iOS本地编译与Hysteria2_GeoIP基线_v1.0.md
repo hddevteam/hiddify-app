@@ -58,7 +58,7 @@ Because hiddify depends on dart_mappable_builder any which doesn't exist
 - HiddifyCore 4.1.0 的 Libbox Swift 协议比仓库旧接口多出方法，并将 DNS 地址改为迭代器；已在 `ExtensionPlatformInterface.swift` 做最小兼容调整。
 - 项目锁定的依赖需要 Flutter 3.38.5；Flutter 3.44.9 会因 `IconData` final 导致图标包编译失败。
 - `FilePath` 现在优先使用 App Group，无法取得容器时回退到 Application Support；回退和 App Group 两条路径均通过 XCTest。
-- 真机构建已通过源码编译阶段，但签名失败：现有配置团队 `M7Q8ASP66Z` 无 Xcode 账号/Profile；本机可见证书团队 `34D596WSR8` 也没有 Hiddify Bundle ID 对应的 App Group/Network Extension/Personal VPN Profile。
+- Bundle ID 已切换为 `com.luckyxmobile.hiddify`，签名团队配置切换为本机个人团队 `34D596WSR8`；仍需该团队在 Apple Developer 中创建对应 App ID、App Group、Network Extension/Personal VPN Profile。
 
 ## 下一步
 

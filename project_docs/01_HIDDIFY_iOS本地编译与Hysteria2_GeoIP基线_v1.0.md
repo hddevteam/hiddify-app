@@ -2,7 +2,7 @@
 
 **目标：** 在个人公开 fork 中完成 Hiddify iOS 模拟器构建基线，并验证 Hysteria2、GeoIP/GeoSite 配置入口和 iOS Packet Tunnel 工程结构。
 
-**当前结论：** 已修复 App Group 容器不可用导致的启动崩溃，并重新完成模拟器安装启动。连接的实体 iPhone 已识别，但真机安装暂时受签名团队缺少 App Group、Network Extension 和 Personal VPN Profile 阻塞。
+**当前结论：** 已修复 App Group 容器不可用导致的启动崩溃，并完成模拟器安装启动。已通过 `xcodebuild -allowProvisioningUpdates` 自动签名，使用个人团队 `34D596WSR8` 的 profile 将 Release 包安装并启动到连接的实体 iPhone；HiddifyCore 初始化和本地 gRPC 服务均有启动日志。Hysteria2、GeoIP/GeoSite 的功能验证仍待完成。
 
 ## 范围
 
@@ -27,6 +27,7 @@
 - [x] `pod install` 成功，`Runner.xcworkspace` 可用于构建。
 - [x] iOS Runner 和 `HiddifyPacketTunnel` 模拟器构建成功。
 - [x] App 已安装并启动到固定 iPhone 17 Pro Max 模拟器。
+- [x] 使用个人团队自动签名，将 Release 包安装并启动到连接的 iPhone 17 Pro Max。
 - [ ] 使用脱敏配置确认 Hysteria2 节点字段可导入或转换。
 - [ ] 确认 GeoIP/GeoSite 数据库或 sing-box rule-set 的来源、下载和更新路径。
 - [ ] 不提交证书、私钥、profile、节点密码或订阅 URL。
@@ -58,11 +59,12 @@ Because hiddify depends on dart_mappable_builder any which doesn't exist
 - HiddifyCore 4.1.0 的 Libbox Swift 协议比仓库旧接口多出方法，并将 DNS 地址改为迭代器；已在 `ExtensionPlatformInterface.swift` 做最小兼容调整。
 - 项目锁定的依赖需要 Flutter 3.38.5；Flutter 3.44.9 会因 `IconData` final 导致图标包编译失败。
 - `FilePath` 现在优先使用 App Group，无法取得容器时回退到 Application Support；回退和 App Group 两条路径均通过 XCTest。
-- Bundle ID 已切换为 `com.luckyxmobile.hiddify`，签名团队配置切换为本机个人团队 `34D596WSR8`；仍需该团队在 Apple Developer 中创建对应 App ID、App Group、Network Extension/Personal VPN Profile。
+- Bundle ID 已切换为 `com.luckyxmobile.hiddify`，签名团队配置切换为本机个人团队 `34D596WSR8`；Xcode 已自动生成并使用 `iOS Team Provisioning Profile: com.luckyxmobile.hiddify`，实体机 Release 包签名、安装、启动均已验证。
+- 实体机启动日志确认：App Group 容器可用，HiddifyCore `libbox.Setup` 成功，gRPC server 监听 `127.0.0.1:17078`。这证明应用启动基线成立，不等同于 Hysteria2 隧道已连通。
 
 ## 下一步
 
-1. 人工观察模拟器首页和配置导入流程。
+1. 人工观察实体机首页和配置导入流程。
 2. 使用脱敏 Hysteria2 配置确认导入、解析和启动路径。
 3. 确认 GeoIP/GeoSite 数据库或 sing-box rule-set 的来源、下载和更新路径。
 4. 再评估是否将 SQLite 下载缓存和 Flutter 3.38.5 工具链写入可复现脚本。

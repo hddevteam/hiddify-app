@@ -68,6 +68,13 @@ app.*.map.json
 # Windows Self-Signed for msix
 windows/sign.pfx
 windows/sign.cer
+
+# Local Apple signing configuration and exported signing assets
+.env.local
+*.p12
+*.pfx
+*.cer
+*.mobileprovision
 .aider.input.history
 .aider.chat.history.md
 .aider.tags.cache.v4
